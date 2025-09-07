@@ -28,7 +28,7 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    @Bean
+    //@Bean
     CommandLineRunner cli(ChatClient.Builder builder) {
         return args -> {
             ChatClient  chat = builder.build();
