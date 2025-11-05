@@ -16,3 +16,44 @@ Publisher 是响应式编程（Reactive Programming）的核心接口，它定�
 # Publisher 与 Reactor 流的关系‌
 - Flux‌（0-N 个元素）：Flux 是 Publisher 的子类，专门处理‌多个数据‌的流‌
 - Mono‌（0-1 个元素）：Mono 也是 Publisher，用于处理‌单个数据‌或空数据‌
+
+# Publisher 类关系
+- Publisher
+  - CorePublisher
+    - Flux
+      - FluxOperator
+      - FluxArray
+      - FluxInterval
+      - FluxIterable
+      - FluxDefer
+      - FluxRange
+      - FluxError
+      - FluxCallable
+      - FluxJust
+      - FluxEmpty
+      - 。。。
+    - Mono
+      - MonoJust
+      - MonoEmpty
+      - MonoCallable
+      - MonoNever
+      - Publisher
+      - MonoSource
+    - CorePublisherAdapter
+    - OptimizableOperator
+    - ParallelFlux
+  - Processor
+    - MonoProcessor
+      - NextProcessor
+    - FluxProcessor
+      - UnicastProcessor
+      - DirectProcessor
+      - EmitterProcessor
+      - DelegateProcessor
+      - ReplayProcessor
+    - ReactiveToFlowProcessor
+    - AbstractListenerWriteProcessor
+    - AbstractListenerWriteFlushProcessor
+  - SourceProducer
+  - NettyOutbound
+  - ReactivePublisherFromFlow
