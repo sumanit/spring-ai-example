@@ -12,12 +12,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import reactor.core.publisher.Flux;
+import reactor.util.context.Context;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,16 +49,22 @@ public class McpClientApplication {
             System.out.println("\n>>> QUESTION: " + userInput);
             System.out.print("\n>>> ASSISTANT: ");
 
+            Flux.deferContextual(contextView -> {
+                HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+                objectObjectHashMap.put("ddd","aaaa");
+                return chatClient.prompt()
+                        .user(userInput)
+                        .advisors(new MyLoggingAdvisor(),new MyLoggingAdvisor2())
+                        .stream()
+                        .chatResponse()
+                        .contextWrite(Context.of(objectObjectHashMap))
+                        .doOnNext(content -> {
+                            System.out.println("doOnNext:"+content.getResult().getOutput().getText());
+                        })
+                        .doOnComplete(() -> System.out.println("\n>>> 流式响应完成"))
+                        .doOnError(error -> System.err.println("流式调用出错: " + error.getMessage()));
+            }) .subscribe();
             // 使用流式调用
-            chatClient.prompt()
-                    .user(userInput)
-                    .stream()
-                    .chatResponse()
-                    .doOnNext(content -> {
-                        System.out.println("model:"+content.getResult().getOutput().getText());
-                    })
-                    .doOnComplete(() -> System.out.println("\n>>> 流式响应完成"))
-                    .doOnError(error -> System.err.println("流式调用出错: " + error.getMessage())).subscribe();
             Thread.sleep(200000L);
             context.close();
         };
